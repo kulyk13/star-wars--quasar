@@ -13,25 +13,28 @@
     <q-drawer
       show-if-above
       bordered
+      class="drawer q-py-md q-px-md"
     >
-      <q-list class="q-px-md">
-        <q-item-label
-          header
-        >
           Filters
-        </q-item-label>
 
-        <q-item-label>
-          <q-checkbox left-label v-model="films" label="Films" />
-        </q-item-label>
-        <q-item-label>
-          <q-checkbox left-label v-model="planets" label="Planets" />
-        </q-item-label>
-        <q-item-label>
-          <q-checkbox left-label v-model="species" label="Species" />
-        </q-item-label>
+        <q-form
+          @submit.prevent=""
+          @reset=""
+          class="filter-form column q-gutter-md q-my-md"
+        >
 
-      </q-list>
+          <q-checkbox v-model="films" label="Films" />
+
+          <q-checkbox v-model="planets" label="Planets" />
+
+          <q-checkbox v-model="species" label="Species" />
+
+          <div>
+            <q-btn label="Submit" type="submit" color="primary"/>
+            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+          </div>
+        </q-form>
+
     </q-drawer>
 
     <q-page-container>
@@ -55,3 +58,12 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss">
+.drawer {
+  font-size: 20px;
+}
+.filter-form {
+  font-size: 16px;
+}
+</style>
