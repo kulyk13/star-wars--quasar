@@ -2,7 +2,7 @@
   <q-page class="flex column items-center q-px-md q-py-md">
     <div class="card-list flex items-start justify-evenly">
       <q-card
-        v-for="(card, idx) in cardData"
+        v-for="card in cardData"
         :key="card.name"
         class="my-card"
       >
@@ -13,9 +13,9 @@
           <div class="text-subtitle2">{{ card.gender !== 'n/a' ? card.gender : 'robot'}}</div>
           <div class="text">Planet: {{ card.homeworld}}</div>
           <div class="text">Films: {{ card.films }}</div>
-          <div class="text">Species: {{ card.species === [] ? '' : card.species }}</div>
-          <div class="text">Vehicles: {{ card.vehicles === [] ? '' : card.vehicles }}</div>
-          <div class="text">Starships: {{ card.starships === [] ? '' : card.starships }}</div>
+          <div class="text">Species: {{ card.species.length > 0 ? card.species : 'none' }}</div>
+          <div class="text">Vehicles: {{ card.vehicles.length > 0 ? card.vehicles : 'none' }}</div>
+          <div class="text">Starships: {{ card.starships.length > 0 ? card.starships : 'none' }}</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
