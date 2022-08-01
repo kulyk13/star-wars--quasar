@@ -2,24 +2,23 @@
   <q-page class="flex column items-center q-px-md q-py-md">
     <div class="card-list flex items-start justify-evenly">
       <q-card
-        v-for="card in cardData"
-        :key="card.name"
+        v-for="character in allCharacters"
+        :key="character.name"
         class="my-card"
       >
         <img src="https://img.freepik.com/free-icon/important-person_318-10744.jpg?w=740&t=st=1659130070~exp=1659130670~hmac=4c4490d7b0efb9988d899c5f6406d3cc2483a95e08e1e748ec3a5f957e735b35">
 
         <q-card-section>
-          <div class="text-h6">{{ card.name }}</div>
+          <div class="text-h6">{{ character.name }}</div>
           <div class="text-subtitle2">{{ card.gender !== 'n/a' ? card.gender : 'robot'}}</div>
-          <div class="text">Planet: {{ card.homeworld}}</div>
-          <div class="text">Films: {{ card.films }}</div>
-          <div class="text">Species: {{ card.species.length > 0 ? card.species : 'none' }}</div>
-          <div class="text">Vehicles: {{ card.vehicles.length > 0 ? card.vehicles : 'none' }}</div>
-          <div class="text">Starships: {{ card.starships.length > 0 ? card.starships : 'none' }}</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-
+          <div class="text">Planet: {{ character.homeworld}}</div>
+          <div class="text">Films: {{ character.films }}</div>
+          <div class="text">Species: {{ character.species.length > 0 ? character.species : 'none' }}</div>
+          <div class="text">Vehicles: {{ character.vehicles.length > 0 ? character.vehicles : 'none' }}</div>
+          <div class="text">Starships: {{ character.starships.length > 0 ? character.starships : 'none' }}</div>
         </q-card-section>
       </q-card>
     </div>
@@ -34,6 +33,7 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { mapGetters } from 'vuex'
 
 export default defineComponent({
   name: 'IndexPage',
@@ -47,6 +47,8 @@ export default defineComponent({
       vehiclesUrl: 'vehicles/',
       starshipsUrl: 'starships/',
       page: 1,
+      fakePage: 1,
+      planets: [],
       cardData: [],
     }
   },
@@ -61,6 +63,7 @@ export default defineComponent({
                     this.cardData.push(el)
                   })
                   this.page++
+                  console.log(this.planets)
                 }
               }
               catch (err) {
@@ -84,16 +87,19 @@ export default defineComponent({
       //   })
     },
   },
-  beforeMount() {
-    if (this.cardData.length === 0) {
-      fetch(`https://swapi.dev/api/people/?page=${this.page}`)
-        .then(res => res.json())
-        .then(res => {
-            res.results.forEach(el => {
-              this.cardData.push(el)
-            })
-        })
-      }
+  computed: mapGetters(['allCharacters']),
+  mounted() {
+    this.$store.dispatch('fetchCharacters')
+    // for (let i = 0; i < 7; i++) {
+    //   fetch(`https://swapi.dev/api/planets/?page=${this.fakePage}`)
+    //     .then(res => res.json())
+    //     .then(res => {
+    //       res.results.forEach(el => {
+    //         this.planets.push(el)
+    //       })
+    //       this.fakePage++
+    //     })
+    // }
   }
 })
 </script>
