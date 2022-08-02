@@ -6,11 +6,34 @@
         :key="character.name"
         class="my-card"
       >
-        <img src="https://img.freepik.com/free-icon/important-person_318-10744.jpg?w=740&t=st=1659130070~exp=1659130670~hmac=4c4490d7b0efb9988d899c5f6406d3cc2483a95e08e1e748ec3a5f957e735b35">
+        <img
+          v-if="character.gender === 'male'"
+          src="https://img.freepik.com/free-icon/important-person_318-10744.jpg?w=740&t=st=1659130070~exp=1659130670~hmac=4c4490d7b0efb9988d899c5f6406d3cc2483a95e08e1e748ec3a5f957e735b35"
+          class="my-card__img"
+          width="1"
+          height="1"
+          loading="lazy"
+        >
+        <img
+          v-if="character.gender === 'female'"
+          src="https://t3.ftcdn.net/jpg/01/87/68/52/360_F_187685268_rBij3TI5BrcE1zRiyfWLJZEhXMRHEaRv.jpg"
+          class="my-card__img"
+          width="1"
+          height="1"
+          loading="lazy"
+        >
+        <img
+          v-if="character.gender === 'n/a'"
+          src="https://www.creativefabrica.com/wp-content/uploads/2018/12/Robot-icon-by-rudezstudio-4-580x386.jpg"
+          class="my-card__img"
+          width="1"
+          height="1"
+          loading="lazy"
+        >
 
         <q-card-section>
           <div class="text-h6">{{ character.name }}</div>
-          <div class="text-subtitle2">{{ card.gender !== 'n/a' ? card.gender : 'robot'}}</div>
+          <div class="text-subtitle2">{{ character.gender !== 'n/a' ? character.gender : 'robot'}}</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
@@ -23,7 +46,7 @@
       </q-card>
     </div>
     <q-btn
-      @click="getPeople(page, this.mainUrl)"
+      @click="addMore(pageNumber)"
       class="q-my-md"
     >
       Add more
@@ -33,73 +56,32 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default defineComponent({
   name: 'IndexPage',
   data() {
     return {
-      mainUrl: 'https://swapi.dev/api/',
-      peopleUrl: 'people/',
-      planetsUrl: 'planets/',
-      filmsUrl: 'films/',
-      speciesUrl: 'species/',
-      vehiclesUrl: 'vehicles/',
-      starshipsUrl: 'starships/',
-      page: 1,
-      fakePage: 1,
-      planets: [],
-      cardData: [],
+      // mainUrl: 'https://swapi.dev/api/',
+      // peopleUrl: 'people/',
+      // planetsUrl: 'planets/',
+      // filmsUrl: 'films/',
+      // speciesUrl: 'species/',
+      // vehiclesUrl: 'vehicles/',
+      // starshipsUrl: 'starships/',
     }
   },
-  methods:{
-    async getPeople(page, url) {
-      return await fetch(`${url}${this.peopleUrl}?page=${page}`)
-        .then(res => res.json())
-        .then(res => {
-            try {
-                if (this.page <= Math.ceil(res.count / 10)) {
-                  res.results.forEach(el => {
-                    this.cardData.push(el)
-                  })
-                  this.page++
-                  console.log(this.planets)
-                }
-              }
-              catch (err) {
-                console.log('People not found', err)
-              }
-            })
-      // return await fetch(`https://swapi.dev/api/people/?page=${page}`)
-      //   .then(res => res.json())
-      //   .then(res => {
-      //     try {
-      //       if (this.page <= Math.ceil(res.count / 10)) {
-      //         res.results.forEach(el => {
-      //           this.cardData.push(el)
-      //         })
-      //         this.page++
-      //       }
-      //     }
-      //     catch (err) {
-      //       console.log('People not found', err)
-      //     }
-      //   })
-    },
+  methods: {
+    ...mapActions(['fetchCharacters']),
+    addMore(page) {
+      // if () {
+        this.fetchCharacters(page)
+      // }
+    }
   },
-  computed: mapGetters(['allCharacters']),
+  computed: mapGetters(['allCharacters', 'pageNumber']),
   mounted() {
-    this.$store.dispatch('fetchCharacters')
-    // for (let i = 0; i < 7; i++) {
-    //   fetch(`https://swapi.dev/api/planets/?page=${this.fakePage}`)
-    //     .then(res => res.json())
-    //     .then(res => {
-    //       res.results.forEach(el => {
-    //         this.planets.push(el)
-    //       })
-    //       this.fakePage++
-    //     })
-    // }
+    this.fetchCharacters();
   }
 })
 </script>
@@ -108,6 +90,12 @@ export default defineComponent({
 .my-card {
   width: 35%;
   gap: 15px 15px;
+
+  &__img {
+    width: 415px;
+    height: 415px;
+    object-fit: cover;
+  }
 }
 .card-list {
   gap: 20px 20px;
