@@ -37,7 +37,8 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <div class="text">Planet: {{ character.homeworld}}</div>
+          <div class="text visually-hidden">Planet: {{ this.fetchPlanet(character.homeworld) }}</div>
+          <div class="text">Planet: {{ allPlanets }}</div>
           <div class="text">Films: {{ character.films }}</div>
           <div class="text">Species: {{ character.species.length > 0 ? character.species : 'none' }}</div>
           <div class="text">Vehicles: {{ character.vehicles.length > 0 ? character.vehicles : 'none' }}</div>
@@ -61,27 +62,27 @@ import { mapGetters, mapActions } from 'vuex'
 export default defineComponent({
   name: 'IndexPage',
   data() {
-    return {
-      // mainUrl: 'https://swapi.dev/api/',
-      // peopleUrl: 'people/',
-      // planetsUrl: 'planets/',
-      // filmsUrl: 'films/',
-      // speciesUrl: 'species/',
-      // vehiclesUrl: 'vehicles/',
-      // starshipsUrl: 'starships/',
-    }
+    return {}
   },
   methods: {
-    ...mapActions(['fetchCharacters']),
+    ...mapActions(['fetchCharacters', 'fetchPlanet']),
     addMore(page) {
       // if () {
         this.fetchCharacters(page)
       // }
+    },
+    planet(url) {
+      this.allPlanets.forEach(el => {
+        if (el.url === url) {
+          return el.name
+        }
+      })
     }
   },
-  computed: mapGetters(['allCharacters', 'pageNumber']),
+  computed: mapGetters(['allCharacters', 'allPlanets', 'pageNumber']),
   mounted() {
     this.fetchCharacters();
+    // this.fetchPlanet('https://swapi.dev/api/planets/3/');
   }
 })
 </script>
