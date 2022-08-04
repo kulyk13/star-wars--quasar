@@ -37,8 +37,7 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <div class="text visually-hidden">Planet: {{ this.fetchPlanet(character.homeworld) }}</div>
-          <div class="text">Planet: {{ allPlanets }}</div>
+          <div class="text">Planet: {{ planet(character.homeworld) }}</div>
           <div class="text">Films: {{ character.films }}</div>
           <div class="text">Species: {{ character.species.length > 0 ? character.species : 'none' }}</div>
           <div class="text">Vehicles: {{ character.vehicles.length > 0 ? character.vehicles : 'none' }}</div>
@@ -67,22 +66,20 @@ export default defineComponent({
   methods: {
     ...mapActions(['fetchCharacters', 'fetchPlanet']),
     addMore(page) {
-      // if () {
-        this.fetchCharacters(page)
-      // }
+      this.fetchCharacters(page)
     },
     planet(url) {
-      this.allPlanets.forEach(el => {
-        if (el.url === url) {
-          return el.name
+      this.fetchPlanet(url)
+      for (let i = 0; i < this.allPlanets.length; i++) {
+        if (this.allPlanets[i].way === url) {
+          return this.allPlanets[i].name
         }
-      })
+      }
     }
   },
   computed: mapGetters(['allCharacters', 'allPlanets', 'pageNumber']),
   mounted() {
     this.fetchCharacters();
-    // this.fetchPlanet('https://swapi.dev/api/planets/3/');
   }
 })
 </script>
