@@ -38,7 +38,17 @@
 
         <q-card-section class="q-pt-none">
           <div class="text">Planet: {{ planet(character.homeworld) }}</div>
-          <div class="text">Films: {{ character.films }}</div>
+          <div class="text">
+            Films: {{ character.films }}
+            <ul class="films-list">
+              <li
+                v-for="film in character.films"
+                class="films-list__item"
+              >
+                {{ films(film) }}
+              </li>
+            </ul>
+          </div>
           <div class="text">Species: {{ character.species.length > 0 ? character.species : 'none' }}</div>
           <div class="text">Vehicles: {{ character.vehicles.length > 0 ? character.vehicles : 'none' }}</div>
           <div class="text">Starships: {{ character.starships.length > 0 ? character.starships : 'none' }}</div>
@@ -64,22 +74,31 @@ export default defineComponent({
     return {}
   },
   methods: {
-    ...mapActions(['fetchCharacters', 'fetchPlanet']),
+    ...mapActions(['fetchCharacters', 'fetchData']),
     addMore(page) {
       this.fetchCharacters(page)
     },
     planet(url) {
-      this.fetchPlanet(url)
+      this.fetchData(url)
       for (let i = 0; i < this.allPlanets.length; i++) {
         if (this.allPlanets[i].way === url) {
           return this.allPlanets[i].name
         }
       }
+    },
+    films(url) {
+      // this.fetchData(url)
+      for (let i = 0; i < this.allFilms.length; i++) {
+        if (this.allFilms[i].way === url) {
+          return this.allFilms[i].title
+        }
+      }
     }
   },
-  computed: mapGetters(['allCharacters', 'allPlanets', 'pageNumber']),
+  computed: mapGetters(['allCharacters', 'allPlanets', 'allFilms', 'allSpecies', 'allVehicles', 'allStarships', 'pageNumber']),
   mounted() {
     this.fetchCharacters();
+    this.fetchData('https://swapi.dev/api/films/');
   }
 })
 </script>

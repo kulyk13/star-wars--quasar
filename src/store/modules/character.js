@@ -2,6 +2,10 @@ export default {
   state: {
     characters: [],
     planets: [],
+    films: [],
+    species: [],
+    vehicles: [],
+    starships: [],
     page: 1,
   },
   getters: {
@@ -10,6 +14,18 @@ export default {
     },
     allPlanets(state) {
       return state.planets
+    },
+    allFilms(state) {
+      return state.films
+    },
+    allSpecies(state) {
+      return state.species
+    },
+    allVehicles(state) {
+      return state.vehicles
+    },
+    allStarships(state) {
+      return state.starships
     },
     pageNumber(state) {
       return state.page
@@ -29,19 +45,25 @@ export default {
           }
         })
     },
-    async fetchPlanet(context, url) {
+    async fetchData(context, url) {
       return await fetch(`${url}`)
         .then(res => res.json())
         .then(res => {
           try {
-            const planet = {
-              "way": `${url}`,
-              "name": res.name,
+            const dataObject = {};
+            if (!url.includes('films')) {
+              dataObject.way = `${url}`;
+              dataObject.name = res.name;
+            } else {
+              res.results.forEach(el => {
+                dataObject.way = el.url;
+                dataObject.title = el.title;
+              })
             }
-            context.commit('updatePlanets', planet)
+            context.commit('updateData', dataObject)
           }
           catch (err) {
-            console.log('Planets not found ', err)
+            console.log('Data not found ', err)
           }
         })
     }
@@ -53,19 +75,41 @@ export default {
       })
       state.page++
     },
-    updatePlanets(state, planet) {
-      if (state.planets.length > 0) {
-        let coin = 0;
-        state.planets.forEach(el => {
-          if (el.name === planet.name) {
-            coin += 1;
+    updateData(state, data) {
+      if (data.way.includes('planets')) {
+        if (state.planets.length > 0) {
+          let coin = 0;
+          state.planets.forEach(el => {
+            if (el.name === data.name) {
+              coin += 1;
+            }
+          })
+          if (coin < 1) {
+            state.planets.push(data)
           }
-        })
-        if (coin < 1) {
-          state.planets.push(planet)
+        } else {
+          state.planets.push(data)
         }
-      } else {
-        state.planets.push(planet)
+      } else if (data.way.includes('films')) {
+        if (state.films.length > 0) {
+          let coin = 0;
+          state.films.forEach(el => {
+            if (el.title === data.title) {
+              coin += 1;
+            }
+          })
+          if (coin < 1) {
+            state.films.push(data)
+          }
+        } else {
+          state.films.push(data)
+        }
+      } else if (data.way.includes('species')) {
+        state.species.push(data)
+      } else if (data.way.includes('vehicles')) {
+        state.vehicles.push(data)
+      } else if (data.way.includes('starships')) {
+        state.starships.push(data)
       }
     }
   }
