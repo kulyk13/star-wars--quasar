@@ -39,7 +39,7 @@
         <q-card-section class="q-pt-none">
           <div class="text">Planet: {{ planet(character.homeworld) }}</div>
           <div class="text">
-            Films: {{ character.films }}
+            Films:
             <ul class="films-list">
               <li
                 v-for="film in character.films"
@@ -86,14 +86,14 @@ export default defineComponent({
         }
       }
     },
-    films(url) {
-      // this.fetchData(url)
+    films() {
       for (let i = 0; i < this.allFilms.length; i++) {
-        if (this.allFilms[i].way === url) {
+        if (this.allFilms[i].url === url) {
           return this.allFilms[i].title
         }
       }
-    }
+    },
+
   },
   computed: mapGetters(['allCharacters', 'allPlanets', 'allFilms', 'allSpecies', 'allVehicles', 'allStarships', 'pageNumber']),
   mounted() {

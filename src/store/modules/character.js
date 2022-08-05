@@ -50,17 +50,14 @@ export default {
         .then(res => res.json())
         .then(res => {
           try {
-            const dataObject = {};
+            let data = {};
             if (!url.includes('films')) {
-              dataObject.way = `${url}`;
-              dataObject.name = res.name;
+              data.way = `${url}`;
+              data.name = res.name;
             } else {
-              res.results.forEach(el => {
-                dataObject.way = el.url;
-                dataObject.title = el.title;
-              })
+              data = res.results
             }
-            context.commit('updateData', dataObject)
+            context.commit('updateData', data)
           }
           catch (err) {
             console.log('Data not found ', err)
@@ -76,7 +73,7 @@ export default {
       state.page++
     },
     updateData(state, data) {
-      if (data.way.includes('planets')) {
+      if (data.way && data.way.includes('planets')) {
         if (state.planets.length > 0) {
           let coin = 0;
           state.planets.forEach(el => {
@@ -90,20 +87,10 @@ export default {
         } else {
           state.planets.push(data)
         }
-      } else if (data.way.includes('films')) {
-        if (state.films.length > 0) {
-          let coin = 0;
-          state.films.forEach(el => {
-            if (el.title === data.title) {
-              coin += 1;
-            }
-          })
-          if (coin < 1) {
-            state.films.push(data)
-          }
-        } else {
-          state.films.push(data)
-        }
+      } else if (data[0].url.includes('films')) {
+        data.forEach(el => {
+          state.films.push(el)
+        })
       } else if (data.way.includes('species')) {
         state.species.push(data)
       } else if (data.way.includes('vehicles')) {
