@@ -37,21 +37,36 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <div class="text">Planet: {{ planet(character.homeworld) }}</div>
+          <div class="text">Planet: {{ singleData(character.homeworld) }}</div>
           <div class="text">
             Films:
             <ul class="films-list">
               <li
-                v-for="film in character.films"
+                v-for="(film,idx) in character.films"
+                :key="idx"
                 class="films-list__item"
               >
-                {{ films(film) }}
+                {{ quantitativeData(film) }}
               </li>
             </ul>
           </div>
-          <div class="text">Species: {{ character.species.length > 0 ? character.species : 'none' }}</div>
+<!--          <div class="text">Species: {{ character.species.length === 0}}</div>-->
+          <template v-if="character.species.length > 0">
+            <div
+              v-for="(specie, idx) in character.species"
+              :key="idx"
+              class="text"
+            >
+              Species: {{ quantitativeData(specie) }}
+            </div>
+          </template>
+          <template v-else>
+            <div class="text">Species: none</div>
+          </template>
           <div class="text">Vehicles: {{ character.vehicles.length > 0 ? character.vehicles : 'none' }}</div>
+<!--          <div class="text">Vehicles: {{ quantitativeData(character.vehicles) }}</div>-->
           <div class="text">Starships: {{ character.starships.length > 0 ? character.starships : 'none' }}</div>
+<!--          <div class="text">Starships: {{ quantitativeData(character.starships) }}</div>-->
         </q-card-section>
       </q-card>
     </div>
@@ -77,28 +92,39 @@ export default defineComponent({
     ...mapActions(['fetchCharacters', 'fetchData']),
     addMore(page) {
       this.fetchCharacters(page)
+      this.fetchData('https://swapi.dev/api/species/', page);
     },
-    planet(url) {
+    singleData(url) {
       this.fetchData(url)
-      for (let i = 0; i < this.allPlanets.length; i++) {
-        if (this.allPlanets[i].way === url) {
-          return this.allPlanets[i].name
+      if (url.includes('planets')) {
+        for (let i = 0; i < this.allPlanets.length; i++) {
+          if (this.allPlanets[i].way === url) {
+            return this.allPlanets[i].name
+          }
         }
       }
     },
-    films() {
-      for (let i = 0; i < this.allFilms.length; i++) {
-        if (this.allFilms[i].url === url) {
-          return this.allFilms[i].title
+    quantitativeData(url) {
+      if (url.includes('films')) {
+        for (let i = 0; i < this.allFilms.length; i++) {
+          if (this.allFilms[i].url === url) {
+            return this.allFilms[i].title
+          }
+        }
+      } else if (url.includes('species')) {
+        for (let i = 0; i < this.allSpecies.length; i++) {
+          if (this.allSpecies[i].url === url) {
+            return this.allSpecies[i].name
+          }
         }
       }
     },
-
   },
   computed: mapGetters(['allCharacters', 'allPlanets', 'allFilms', 'allSpecies', 'allVehicles', 'allStarships', 'pageNumber']),
   mounted() {
     this.fetchCharacters();
     this.fetchData('https://swapi.dev/api/films/');
+    this.fetchData('https://swapi.dev/api/species/');
   }
 })
 </script>

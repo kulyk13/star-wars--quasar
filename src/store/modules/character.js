@@ -45,13 +45,13 @@ export default {
           }
         })
     },
-    async fetchData(context, url) {
-      return await fetch(`${url}`)
+    async fetchData(context, url, page= 1) {
+      return await fetch((`${(url.includes('species')) ? url + '?page=' + page : url}`).split(' ').join(''))
         .then(res => res.json())
         .then(res => {
           try {
             let data = {};
-            if (!url.includes('films')) {
+            if (!url.includes('films') && !url.includes('species')) {
               data.way = `${url}`;
               data.name = res.name;
             } else {
@@ -87,12 +87,14 @@ export default {
         } else {
           state.planets.push(data)
         }
-      } else if (data[0].url.includes('films')) {
+      } else if (data[0].url && data[0].url.includes('species')) {
+        data.forEach(el => {
+          state.species.push(el)
+        })
+      } else if (data[0].url && data[0].url.includes('films')) {
         data.forEach(el => {
           state.films.push(el)
         })
-      } else if (data.way.includes('species')) {
-        state.species.push(data)
       } else if (data.way.includes('vehicles')) {
         state.vehicles.push(data)
       } else if (data.way.includes('starships')) {
