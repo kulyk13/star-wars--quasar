@@ -102,8 +102,15 @@ export default {
           state.species.push(data)
         }
       } else if (data[0] && data[0].url.includes('films')) {
+          // console.log(data[i].title)
+          // for (let i = 0; i < data.length; i++) {
+          //   if (state.films[i].title !== data[i].title) {
+          //     state.films.push(data[i].title)
+          //   }
+          // }
           data.forEach(el => {
             state.films.push(el)
+            console.log(el)
           })
       } else if (data.way && data.way.includes('vehicles')) {
           if (state.vehicles.length > 0) {

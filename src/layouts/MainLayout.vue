@@ -22,13 +22,30 @@
           @reset=""
           class="filter-form column q-gutter-md q-my-md"
         >
-
-          <q-checkbox v-model="films" label="Films" />
-
-          <q-checkbox v-model="planets" label="Planets" />
-
-          <q-checkbox v-model="species" label="Species" />
-
+          <fieldset>
+            <legend>Films</legend>
+            <q-checkbox
+              v-for="(film, idx) in allFilms"
+              :key="idx"
+              :label="film.title"
+            />
+          </fieldset>
+          <fieldset>
+            <legend>Planets</legend>
+            <q-checkbox
+              v-for="(planet, idx) in allPlanets"
+              :key="idx"
+              :label="planet.name"
+            />
+          </fieldset>
+          <fieldset>
+            <legend>Species</legend>
+            <q-checkbox
+              v-for="(specie, idx) in allSpecies"
+              :key="idx"
+              :label="specie.name"
+            />
+          </fieldset>
           <div>
             <q-btn label="Submit" type="submit" color="primary"/>
             <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
@@ -45,17 +62,12 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
+import {mapGetters} from "vuex";
 
 export default defineComponent({
   name: 'MainLayout',
   components: {},
-  setup () {
-    return {
-      films: ref(false),
-      planets: ref(false),
-      species: ref(false),
-    }
-  }
+  computed: mapGetters(['allCharacters', 'allPlanets', 'allFilms', 'allSpecies', 'allVehicles', 'allStarships', 'pageNumber']),
 })
 </script>
 
