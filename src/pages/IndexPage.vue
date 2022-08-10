@@ -50,7 +50,6 @@
               </li>
             </ul>
           </div>
-<!--          <div class="text">Species: {{ character.species.length === 0}}</div>-->
           <template v-if="character.species.length > 0">
             <div
               v-for="(specie, idx) in character.species"
@@ -63,8 +62,22 @@
           <template v-else>
             <div class="text">Species: none</div>
           </template>
-          <div class="text">Vehicles: {{ character.vehicles.length > 0 ? character.vehicles : 'none' }}</div>
-<!--          <div class="text">Vehicles: {{ quantitativeData(character.vehicles) }}</div>-->
+          <div class="text">
+            Vehicles:
+            <template v-if="character.vehicles.length > 0">
+              <ul>
+                <li
+                  v-for="(vehicle, idx) in character.vehicles"
+                  :key="idx"
+                >
+                  {{ singleData(vehicle) }}
+                </li>
+              </ul>
+            </template>
+            <template v-else>
+              none
+            </template>
+          </div>
           <div class="text">Starships: {{ character.starships.length > 0 ? character.starships : 'none' }}</div>
 <!--          <div class="text">Starships: {{ quantitativeData(character.starships) }}</div>-->
         </q-card-section>
@@ -102,6 +115,12 @@ export default defineComponent({
             return this.allPlanets[i].name
           }
         }
+      } else if (url.includes('vehicles')) {
+        for (let i = 0; i < this.allVehicles.length; i++) {
+          if (this.allVehicles[i].way === url) {
+            return this.allVehicles[i].name
+          }
+        }
       }
     },
     quantitativeData(url) {
@@ -123,8 +142,8 @@ export default defineComponent({
   computed: mapGetters(['allCharacters', 'allPlanets', 'allFilms', 'allSpecies', 'allVehicles', 'allStarships', 'pageNumber']),
   mounted() {
     this.fetchCharacters();
-    this.fetchData('https://swapi.dev/api/films/');
-    this.fetchData('https://swapi.dev/api/species/');
+    this.fetchData('https://swapi.dev/api/films/', 1);
+    this.fetchData('https://swapi.dev/api/species/', 1);
   }
 })
 </script>

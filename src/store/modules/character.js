@@ -87,18 +87,28 @@ export default {
         } else {
           state.planets.push(data)
         }
-      } else if (data[0].url && data[0].url.includes('species')) {
+      } else if (data[0] && data[0].url.includes('species')) {
         data.forEach(el => {
           state.species.push(el)
         })
-      } else if (data[0].url && data[0].url.includes('films')) {
+      } else if (data[0] && data[0].url.includes('films')) {
         data.forEach(el => {
           state.films.push(el)
         })
-      } else if (data.way.includes('vehicles')) {
-        state.vehicles.push(data)
-      } else if (data.way.includes('starships')) {
-        state.starships.push(data)
+      }else if (data.way && data.way.includes('vehicles')) {
+        if (state.vehicles.length > 0) {
+          let coin = 0;
+          state.vehicles.forEach(el => {
+            if (el.name === data.name) {
+              coin += 1;
+            }
+          })
+          if (coin < 1) {
+            state.vehicles.push(data)
+          }
+        } else {
+          state.vehicles.push(data)
+        }
       }
     }
   }
