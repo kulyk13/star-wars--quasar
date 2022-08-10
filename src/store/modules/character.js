@@ -45,13 +45,13 @@ export default {
           }
         })
     },
-    async fetchData(context, url, page= 1) {
-      return await fetch((`${(url.includes('species')) ? url + '?page=' + page : url}`).split(' ').join(''))
+    async fetchData(context, url) {
+      return await fetch(url)
         .then(res => res.json())
         .then(res => {
           try {
             let data = {};
-            if (!url.includes('films') && !url.includes('species')) {
+            if (!url.includes('films')) {
               data.way = `${url}`;
               data.name = res.name;
             } else {
@@ -87,28 +87,52 @@ export default {
         } else {
           state.planets.push(data)
         }
-      } else if (data[0] && data[0].url.includes('species')) {
-        data.forEach(el => {
-          state.species.push(el)
-        })
-      } else if (data[0] && data[0].url.includes('films')) {
-        data.forEach(el => {
-          state.films.push(el)
-        })
-      }else if (data.way && data.way.includes('vehicles')) {
-        if (state.vehicles.length > 0) {
+      } else if (data.way && data.way.includes('species')) {
+        if (state.species.length > 0) {
           let coin = 0;
-          state.vehicles.forEach(el => {
+          state.species.forEach(el => {
             if (el.name === data.name) {
               coin += 1;
             }
           })
           if (coin < 1) {
-            state.vehicles.push(data)
+            state.species.push(data)
           }
         } else {
-          state.vehicles.push(data)
+          state.species.push(data)
         }
+      } else if (data[0] && data[0].url.includes('films')) {
+          data.forEach(el => {
+            state.films.push(el)
+          })
+      } else if (data.way && data.way.includes('vehicles')) {
+          if (state.vehicles.length > 0) {
+            let coin = 0;
+            state.vehicles.forEach(el => {
+              if (el.name === data.name) {
+                coin += 1;
+              }
+            })
+            if (coin < 1) {
+              state.vehicles.push(data)
+            }
+          } else {
+            state.vehicles.push(data)
+          }
+      } else if (data.way && data.way.includes('starships')) {
+          if (state.starships.length > 0) {
+            let coin = 0;
+            state.starships.forEach(el => {
+              if (el.name === data.name) {
+                coin += 1;
+              }
+            })
+            if (coin < 1) {
+              state.starships.push(data)
+            }
+          } else {
+            state.starships.push(data)
+          }
       }
     }
   }

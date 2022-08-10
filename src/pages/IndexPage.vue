@@ -37,7 +37,22 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <div class="text">Planet: {{ singleData(character.homeworld) }}</div>
+          <div class="text">Planet: {{ separateRequest(character.homeworld) }}</div>
+          <div
+            v-if="character.species.length > 0"
+            class="text"
+          >
+            Species:
+            <template
+              v-for="(specie, idx) in character.species"
+              :key="idx"
+            >
+              {{ separateRequest(specie) }}
+            </template>
+          </div>
+          <div v-else>
+            Species: none
+          </div>
           <div class="text">
             Films:
             <ul class="films-list">
@@ -46,22 +61,10 @@
                 :key="idx"
                 class="films-list__item"
               >
-                {{ quantitativeData(film) }}
+                {{ singlePageData(film) }}
               </li>
             </ul>
           </div>
-          <template v-if="character.species.length > 0">
-            <div
-              v-for="(specie, idx) in character.species"
-              :key="idx"
-              class="text"
-            >
-              Species: {{ quantitativeData(specie) }}
-            </div>
-          </template>
-          <template v-else>
-            <div class="text">Species: none</div>
-          </template>
           <div class="text">
             Vehicles:
             <template v-if="character.vehicles.length > 0">
@@ -70,7 +73,7 @@
                   v-for="(vehicle, idx) in character.vehicles"
                   :key="idx"
                 >
-                  {{ singleData(vehicle) }}
+                  {{ separateRequest(vehicle) }}
                 </li>
               </ul>
             </template>
@@ -78,8 +81,22 @@
               none
             </template>
           </div>
-          <div class="text">Starships: {{ character.starships.length > 0 ? character.starships : 'none' }}</div>
-<!--          <div class="text">Starships: {{ quantitativeData(character.starships) }}</div>-->
+          <div class="text">
+            Starships:
+            <template v-if="character.starships.length > 0">
+              <ul>
+                <li
+                  v-for="(starship, idx) in character.starships"
+                  :key="idx"
+                >
+                  {{ separateRequest(starship) }}
+                </li>
+              </ul>
+            </template>
+            <template v-else>
+              none
+            </template>
+          </div>
         </q-card-section>
       </q-card>
     </div>
@@ -105,14 +122,19 @@ export default defineComponent({
     ...mapActions(['fetchCharacters', 'fetchData']),
     addMore(page) {
       this.fetchCharacters(page)
-      this.fetchData('https://swapi.dev/api/species/', page);
     },
-    singleData(url) {
+    separateRequest(url) {
       this.fetchData(url)
       if (url.includes('planets')) {
         for (let i = 0; i < this.allPlanets.length; i++) {
           if (this.allPlanets[i].way === url) {
             return this.allPlanets[i].name
+          }
+        }
+      } else if (url.includes('species')) {
+        for (let i = 0; i < this.allSpecies.length; i++) {
+          if (this.allSpecies[i].way === url) {
+            return this.allSpecies[i].name
           }
         }
       } else if (url.includes('vehicles')) {
@@ -121,19 +143,19 @@ export default defineComponent({
             return this.allVehicles[i].name
           }
         }
+      } else if (url.includes('starships')) {
+        for (let i = 0; i < this.allStarships.length; i++) {
+          if (this.allStarships[i].way === url) {
+            return this.allStarships[i].name
+          }
+        }
       }
     },
-    quantitativeData(url) {
+    singlePageData(url) {
       if (url.includes('films')) {
         for (let i = 0; i < this.allFilms.length; i++) {
           if (this.allFilms[i].url === url) {
             return this.allFilms[i].title
-          }
-        }
-      } else if (url.includes('species')) {
-        for (let i = 0; i < this.allSpecies.length; i++) {
-          if (this.allSpecies[i].url === url) {
-            return this.allSpecies[i].name
           }
         }
       }
@@ -142,8 +164,7 @@ export default defineComponent({
   computed: mapGetters(['allCharacters', 'allPlanets', 'allFilms', 'allSpecies', 'allVehicles', 'allStarships', 'pageNumber']),
   mounted() {
     this.fetchCharacters();
-    this.fetchData('https://swapi.dev/api/films/', 1);
-    this.fetchData('https://swapi.dev/api/species/', 1);
+    this.fetchData('https://swapi.dev/api/films/');
   }
 })
 </script>
